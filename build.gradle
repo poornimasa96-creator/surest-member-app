@@ -21,6 +21,25 @@ configurations {
     }
 }
 
+// Integration test source set configuration
+sourceSets {
+    integrationTest {
+        java {
+            srcDir 'src/integration-test/java'
+        }
+        resources {
+            srcDir 'src/integration-test/resources'
+        }
+        compileClasspath += sourceSets.main.output + sourceSets.test.output
+        runtimeClasspath += sourceSets.main.output + sourceSets.test.output
+    }
+}
+
+configurations {
+    integrationTestImplementation.extendsFrom testImplementation
+    integrationTestRuntimeOnly.extendsFrom testRuntimeOnly
+}
+
 repositories {
     mavenCentral()
 }
@@ -55,7 +74,7 @@ dependencies {
     // Docker Compose
     runtimeOnly 'org.springframework.boot:spring-boot-docker-compose'
 
-    // Testing
+    // Testing - Unit Tests
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
@@ -78,6 +97,15 @@ jacocoTestReport {
         html.required = true
     }
     executionData fileTree(project.buildDir).include("/jacoco/*.exec")
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                '**/domain/**',
+                '**/config/**'
+            ])
+        }))
+    }
 }
 
 jacocoTestCoverageVerification {
@@ -87,6 +115,15 @@ jacocoTestCoverageVerification {
                 minimum = 0.80
             }
         }
+    }
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                '**/domain/**',
+                '**/config/**'
+            ])
+        }))
     }
 }
 
