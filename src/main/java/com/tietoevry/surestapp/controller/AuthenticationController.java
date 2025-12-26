@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "api/auth", produces = {MediaType.APPLICATION_JSON_VALUE, "application/vnd.surest.api.v1+json"})
+@RequestMapping(value = "api/v1/auth", produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Authentication", description = "Authentication management APIs")
 public class AuthenticationController {
 
