@@ -1,0 +1,27 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: surest-postgres
+    environment:
+      POSTGRES_DB: surest_db
+      POSTGRES_USER: surestuser
+      POSTGRES_PASSWORD: password123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - surest-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U surestuser -d surest_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  surest-network:
+    driver: bridge
