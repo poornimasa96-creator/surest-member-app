@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(value = "api/members", produces = {MediaType.APPLICATION_JSON_VALUE, "application/vnd.surest.api.v1+json"})
+@RequestMapping(value = "api/v1/members", produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Members", description = "Member management APIs with CRUD operations")
 @SecurityRequirement(name = "Bearer Authentication")
 public class MemberController {
