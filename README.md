@@ -1,6 +1,6 @@
 # Surest Member Management Application
 
-A production-ready Spring Boot REST API for managing member information with JWT authentication and role-based authorization. Built following Domain-Driven Design principles with comprehensive test coverage and modern Java best practices.
+A Spring Boot REST API for managing member information with JWT authentication and role-based authorization.
 
 ## Table of Contents
 
@@ -9,7 +9,6 @@ A production-ready Spring Boot REST API for managing member information with JWT
 - [Project Structure](#project-structure)
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
   - [Running the Application](#running-the-application)
 - [API Documentation](#api-documentation)
 - [Security](#security)
@@ -17,7 +16,6 @@ A production-ready Spring Boot REST API for managing member information with JWT
 - [Configuration](#configuration)
 - [Database](#database)
 - [Development](#development)
-- [License](#license)
 
 ## Features
 
@@ -104,8 +102,7 @@ src/main/java/com/tietoevry/surestapp/
 │   ├── JwtAuthenticationEntryPoint.java    # Unauthorized handler
 │   └── UserDetailsServiceImpl.java         # User details service
 └── util/                                    # Utility classes
-    ├── JwtUtil.java                        # JWT token operations
-    └── PasswordHashGenerator.java          # Password hash generator
+    └── JwtUtil.java                        # JWT token operations
 
 src/main/resources/
 ├── application.yml                          # Application configuration
@@ -115,7 +112,6 @@ src/main/resources/
     └── V2__Seed_data.sql                   # Initial data seeding
 
 src/test/java/                               # Unit tests
-src/integration-test/java/                   # Integration tests
 ```
 
 ## Getting Started
@@ -123,29 +119,12 @@ src/integration-test/java/                   # Integration tests
 ### Prerequisites
 
 - **Java 17** or higher
-- **Docker** and **Docker Compose** (for PostgreSQL)
+- **Docker** (for PostgreSQL)
 - **Gradle 9.2.1** or higher (or use included Gradle wrapper)
 
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd surest-member-app
-   ```
-
-2. **Start PostgreSQL with Docker Compose**
-   ```bash
-   docker compose up -d
-   ```
-   This will start PostgreSQL 16 on `localhost:5432` with database `surest_db`.
-
-3. **Build the project**
-   ```bash
-   ./gradlew clean build
-   ```
-
 ### Running the Application
+
+The application uses Spring Boot Docker Compose support, which automatically starts the PostgreSQL container when you run the application.
 
 **Using Gradle:**
 ```bash
@@ -154,15 +133,11 @@ src/integration-test/java/                   # Integration tests
 
 **Using JAR file:**
 ```bash
+./gradlew clean build
 java -jar build/libs/surest-app-0.0.1-SNAPSHOT.jar
 ```
 
-The application will start on `http://localhost:8080`
-
-**Verify it's running:**
-```bash
-curl http://localhost:8080/actuator/health
-```
+The application will start on `http://localhost:8080`. PostgreSQL will automatically start via Docker Compose.
 
 ## API Documentation
 
@@ -296,21 +271,16 @@ Two users are pre-seeded in the database:
 
 ## Testing
 
-The project includes comprehensive unit tests with high code coverage requirements.
+The project includes unit tests with JaCoCo code coverage.
 
-### Run All Tests
+### Run Tests
 ```bash
 ./gradlew test
 ```
 
-### Run Integration Tests
-```bash
-./gradlew integrationTest
-```
-
 ### Generate Coverage Report
 ```bash
-./gradlew test jacocoTestReport
+./gradlew jacocoTestReport
 ```
 
 Coverage report will be available at: `build/reports/jacoco/test/html/index.html`
@@ -319,17 +289,6 @@ Coverage report will be available at: `build/reports/jacoco/test/html/index.html
 
 - **Minimum Coverage:** 80%
 - **Excluded Packages:** Domain entities and configuration classes
-
-### Test Naming Convention
-
-Tests follow the `should_when` pattern:
-```java
-@Test
-@DisplayName("Should return member when valid ID is provided")
-void should_returnMember_when_validIdProvided() {
-    // Test implementation
-}
-```
 
 ## Configuration
 
@@ -395,20 +354,12 @@ Database migrations are managed by Flyway:
 - **V1__Create_schema.sql** - Creates tables, indexes, and triggers
 - **V2__Seed_data.sql** - Seeds initial users and sample members
 
-### Generate Password Hash
-
-To generate BCrypt password hashes for seeding:
-
-```bash
-./gradlew generatePasswordHash
-```
-
 ## Development
 
 ### Code Style
 
-- **Constructor Injection:** Always prefer constructor injection over field injection
-- **Immutable DTOs:** Use `@Data` and `@Builder` from Lombok for DTOs
+- **Constructor Injection:** Prefer constructor injection over field injection
+- **Lombok:** Use for reducing boilerplate code in DTOs
 - **Validation:** Use Jakarta Bean Validation annotations
 - **Exception Handling:** Create custom exceptions with meaningful messages
 - **Logging:** Use SLF4J with appropriate log levels
@@ -417,7 +368,7 @@ To generate BCrypt password hashes for seeding:
 
 - **Spring Boot DevTools:** Automatic restart on code changes
 - **Lombok:** Reduces boilerplate code
-- **H2 Database:** Available for testing (in-memory)
+- **Spring Boot Docker Compose:** Automatic PostgreSQL container management
 
 ### Building for Production
 
@@ -444,7 +395,3 @@ This application follows Domain-Driven Design (DDD) principles:
 - **Repository Pattern:** Data access abstraction
 - **Service Layer:** Business logic orchestration
 - **Exception Handling:** Centralized error handling with meaningful responses
-
-## License
-
-Copyright © 2024 TietoEvry. All rights reserved.
