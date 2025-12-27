@@ -2,6 +2,7 @@ package com.tietoevry.surestapp.security;
 
 import com.tietoevry.surestapp.domain.User;
 import com.tietoevry.surestapp.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
@@ -21,9 +23,14 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        log.info("Loading user details for username: {}", username);
         User user = userRepository.findByUsername(username)
-            .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+            .orElseThrow(() -> {
+                log.error("User not found: {}", username);
+                return new UsernameNotFoundException("User not found: " + username);
+            });
 
+        log.info("Successfully loaded user details for username: {}", username);
         return org.springframework.security.core.userdetails.User.builder()
             .username(user.getUsername())
             .password(user.getPasswordHash())
