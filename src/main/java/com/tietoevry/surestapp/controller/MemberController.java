@@ -15,8 +15,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -27,13 +26,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+@Slf4j
 @RestController
 @RequestMapping(value = "api/v1/members", produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Members", description = "Member management APIs with CRUD operations")
 @SecurityRequirement(name = "Bearer Authentication")
 public class MemberController {
 
-    private static final Logger logger = LoggerFactory.getLogger(MemberController.class);
     private final MemberService memberService;
 
     public MemberController(MemberService memberService) {
@@ -77,13 +76,14 @@ public class MemberController {
             @Parameter(description = "Filter by last name (case-insensitive partial match)")
             @RequestParam(required = false) String lastName) {
 
-        logger.debug("GET /members - page: {}, size: {}, sort: {}, direction: {}", page, size, sort, direction);
+        log.info("Received request to get all members - page: {}, size: {}, sort: {}, direction: {}", page, size, sort, direction);
 
         Sort.Direction sortDirection = Sort.Direction.fromString(direction);
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(sortDirection, sort));
 
         PagedMemberResponse response = memberService.getAllMembers(
             pageRequest, firstName, lastName);
+        log.info("Successfully retrieved {} members", response.content().size());
         return ResponseEntity.ok(response);
     }
 
@@ -113,8 +113,9 @@ public class MemberController {
     public ResponseEntity<MemberResponse> getMemberById(
             @Parameter(description = "Member UUID", example = "123e4567-e89b-12d3-a456-426614174000")
             @PathVariable UUID id) {
-        logger.debug("GET /members/{}", id);
+        log.info("Received request to get member with ID: {}", id);
         MemberResponse response = memberService.getMemberById(id);
+        log.info("Successfully retrieved member with ID: {}", id);
         return ResponseEntity.ok(response);
     }
 
@@ -147,8 +148,9 @@ public class MemberController {
         )
     })
     public ResponseEntity<MemberResponse> createMember(@Valid @RequestBody CreateMemberRequest request) {
-        logger.info("POST /members - Creating member with email: {}", request.email());
+        log.info("Received request to create member with email: {}", request.email());
         MemberResponse response = memberService.createMember(request);
+        log.info("Successfully created member with ID: {}", response.id());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -189,8 +191,9 @@ public class MemberController {
             @Parameter(description = "Member UUID", example = "123e4567-e89b-12d3-a456-426614174000")
             @PathVariable UUID id,
             @Valid @RequestBody UpdateMemberRequest request) {
-        logger.info("PUT /members/{} - Updating member", id);
+        log.info("Received request to update member with ID: {}", id);
         MemberResponse response = memberService.updateMember(id, request);
+        log.info("Successfully updated member with ID: {}", id);
         return ResponseEntity.ok(response);
     }
 
@@ -224,8 +227,9 @@ public class MemberController {
     public ResponseEntity<Void> deleteMember(
             @Parameter(description = "Member UUID", example = "123e4567-e89b-12d3-a456-426614174000")
             @PathVariable UUID id) {
-        logger.info("DELETE /members/{} - Deleting member", id);
+        log.info("Received request to delete member with ID: {}", id);
         memberService.deleteMember(id);
+        log.info("Successfully deleted member with ID: {}", id);
         return ResponseEntity.noContent().build();
     }
 }
