@@ -1,4 +1,3 @@
-# this line is added by poornima
 # Surest Member Management Application
 
 A Spring Boot REST API for managing member information with JWT authentication and role-based authorization.
